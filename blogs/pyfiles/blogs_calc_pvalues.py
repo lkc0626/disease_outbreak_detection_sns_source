@@ -9,7 +9,7 @@ from utils import normalize_str as nstr
 
 
 def gdt(str):
-    return datetime.datetime.strptime(str, "%Y-%m")
+    return datetime.datetime.strptime(str, "%Y-%m-%d")
 
 def keyterms(database, cutoff):
     kws = dict()
@@ -99,10 +99,10 @@ def mainproc(cutoff):
     folder = 'data/'
 
     #stdt  = gdt('2012-05-01') 
-    stdt  = gdt('2012-01') 
+    stdt  = gdt('2012-01-01') 
     #cutdt = gdt('2013-12-30')
-    cutdt = gdt('2012-09')
-    enddt = gdt('2012-12')
+    cutdt = gdt('2012-09-01')
+    enddt = gdt('2012-12-31')
     gsr = pickle.loads(open(os.path.join(folder, 'cu_gsr.txt')).read())
  #   //print gsr
     for co1 in cos[:]:
@@ -150,7 +150,7 @@ def mainproc(cutoff):
         folder1 = 'data/{0}/blogs_output'.format(co1, cutoff)
         if not os.path.exists(folder1):
             os.makedirs(folder1)
-        out = open(os.path.join(folder1, '{0}.txt'.format(dt.strftime("%Y-%m"))), 'w')
+        out = open(os.path.join(folder1, '{0}.txt'.format(dt.strftime("%Y-%m-%d"))), 'w')
         for id, p in dt_data1:
             out.write('{0} {1}'.format(id, p) + '\n')
         out.close()
