@@ -71,9 +71,12 @@ def getnetwork(place, K):
 
     return network
 
+"""
 folder = '/raid/home/nvcfchen/data'
 ci_co_st_2_latlong = pickle.load(open(os.path.join(folder, 'ci_co_st_2_latlong.pkl')))
+"""
 
+ci_co_st_2_latlong = pickle.load(open('ci_co_st_2_latlong.pkl'))
 cos = ['argentina', 'ecuador', 'colombia', 'chile', 'mexico']
 for co1 in cos[:]:
     print co1
