@@ -2,14 +2,25 @@ import json
 import datetime
 import os
 
-#Text file containing [city, date, score]
 
-# Warning file should be sorted by date 
-#arguments: warning_file, gsr_file, cutoff 
+
+#File to take warning files 
+def makeWarningFile(path):
+	warning_file = open('warning_file', 'a')	
+	for filename in os.listdir(path):
+		dateobj = datetime.datetime.strptime(filename[0:10],'%Y-%m-%d').date()		
+		file_path = os.path.join(path, filename)
+		items = json.loads(open(file_path).read())
+		score = items[-1]
+			for id in range(len(items)-1):							
+				warning_file.write('{0} {1} {2}\n'.format(id, filename[0:10], score))
+				
+
+
 def proc(warning_file, gsr_file, cutoff):
 	pred = [] # value to hold city, dt, score 
 	# Proc equivalent 
-	lines = open(warning_file, "r").readlines() #ADD: Open file with [city, date, score] (add event type as well?) 
+	lines = open(warning_file, "r").readlines() #ADD: Open file with [id, date, score] 
 	for line in lines:
 		items = line.split()
 		id = items[0] 
@@ -36,17 +47,7 @@ def proc(warning_file, gsr_file, cutoff):
 				gsr[id] = {dt: 0} 
 		#curpred = pred[] 	
 		tpr_fp(pred, gsr) 
-			"""
-			tprs = []
-			fps = []
-			for i in range(1, 300):
-				cur_pred = pred[:i] #cur_pred takes predictions to a certain range 
-				tpr, fp = tpr_fp(cur_pred, gsr) #proc calls tpr_fp here to return tpr fp 
-				tprs.append(tpr)
-				fps.append(fp)
-
-			return tprs, fps
-			"""
+			
 # TP/FP Equivalent 	
 
 #Formula for recall is total true events within two weeks / total true events 
@@ -59,13 +60,10 @@ def tpr_fp(cur_pred, gsr):
 	data = dict() # used to hold all the true events 
 	n = dict() # number of events that happen within a 2 week window of all nodes 
 
-	"""
-	for ci, id, dts in gsr.items():
-		n = n + len(dts)
-	"""
+	
 	#n = dict() number of events that happen in the two week window 
 	
-	for id, dt, score in cur_pred
+	for id, dt, score in cur_pred:
 		flag = 0
 		if score >= cutoff: 
 			# First if statement checks if there is an exact match between a gsr event and an EMBERS warning
@@ -84,7 +82,7 @@ def tpr_fp(cur_pred, gsr):
 						flag = 1
 						nd = nd1
 						break  
-					if gsr.has_key(id) and gsr[id)].has_key(nd2):
+					if gsr.has_key(id) and gsr[id].has_key(nd2):
 						data[(id,dt)] = 1
 						flag = 1 
 						nd = nd2
@@ -116,9 +114,9 @@ def tpr_fp(cur_pred, gsr):
 		print recall 
 
 if __name__ == '__main__':
+	makeWarningFile('/Users/Adityan/Documents/Github_Repos/disease_outbreak_detection/gsr/subgraph')
 	
-	
-	proc(warning_file, gsr_file, cutoff)
+	#proc(warning_file, gsr_file, cutoff)
 	 
 
 
