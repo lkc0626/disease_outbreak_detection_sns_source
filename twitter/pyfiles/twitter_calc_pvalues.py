@@ -142,9 +142,8 @@ def mainproc(cutoff):
              if ci_2_id.has_key(cistr):
                 id = ci_2_id[cistr]
                 dt_data.append([id, pvalues[dt]])
-            
-        else:
-            dt_data = sorted(dt_data, key = lambda item: item[0])
+             else:
+                dt_data = sorted(dt_data, key = lambda item: item[0])
         
         n = len(ci_2_id.keys())
         dt_data1 = []
