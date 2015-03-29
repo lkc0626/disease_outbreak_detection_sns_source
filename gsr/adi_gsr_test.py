@@ -8,7 +8,7 @@ def gdt(str):
     return datetime.datetime.strptime(str, "%Y-%m-%d")
 
 gsrfile = 'gsrFebruary_all.mjson' 
-savePath = '/Users/Adityan/Dropbox/KDD/output' #Change this to where you want to save the output
+savePath = '/Users/Adityan/Documents/Github_Repos/disease_outbreak_detection/gsr/output' #Change this to where you want to save the output
 
 #Code to delete any previous output in the output folder 
 for file in os.listdir(savePath):
@@ -52,6 +52,7 @@ for key in gsr:
 
 # Cuts off any events that are older than the cutoff date 	
 cutdt = gdt('2013-12-31')
+enddt = gdt('2015-03-29') 
 for co1 in cos[0:]:
     ci_2_id = json.loads(open(co1+'_ci_2_id.txt'.format(co1)).read())
     items = sorted(ci_2_id.keys())
@@ -63,6 +64,6 @@ for co1 in cos[0:]:
                 id = ci_2_id[ci]
                 for dt in sorted(dts):
                     print co+' '+et+' '+dt.strftime('%Y-%m-%d')
-                    if dt >= cutdt:
+                    if dt >= cutdt and dt <= enddt: 
                     	pathName = os.path.join(savePath, 'Gsr_'+co+'_'+et+'.txt'.format(co1))
                         open(pathName, 'a').write('{0} {1}\n'.format(id, dt.strftime('%Y-%m-%d')))   	
