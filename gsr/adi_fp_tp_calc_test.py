@@ -13,7 +13,7 @@ def makeWarningFile(path):
 		dateobj = datetime.datetime.strptime(filename[0:10],'%Y-%m-%d').date()		
 		file_path = os.path.join(path, filename)
 		items = open(file_path).read().split()
-		print items
+		#print items
 		score = items[-1]
 		for id in range(len(items)-1):							
 			warning_file.write('{0} {1} {2}\n'.format(items[id], filename[0:10], score))
@@ -29,12 +29,12 @@ def proc(warning_file, gsr_file, cutoff):
 		id = items[0] 
 		dt = datetime.datetime.strptime(items[1], "%Y-%m-%d")
 		score = float(items[2])
-		pred.append((id, dt, score)) #adding city, dt, score values 
+		pred.append((id, dt, score)) #adding id, dt, score values 
 	
 	
 		#gsr_file = "" #ADD: where the gsr file is defined, gsr file should have id, dt, et 
 		
-		pred = sorted(pred, key = lambda item: item[0]) #sorts pred value based on city 
+		pred = sorted(pred, key = lambda item: item[0]) #sorts pred value based on id
 	
 		gsr = dict() #Dictionary to hold gsr events from file 
 	
@@ -48,8 +48,9 @@ def proc(warning_file, gsr_file, cutoff):
 				gsr[id][dt] = 0
 			else:
 				gsr[id] = {dt: 0} 
-		#curpred = pred[] 
-	#print "Calling tpr_fp"	
+		
+	print "GSR Events: "+str(len(gsr))
+	print "Predictions: "+str(len(pred))
 	tpr_fp(pred, gsr, cutoff) 
 			
 # TP/FP Equivalent 	
@@ -83,19 +84,21 @@ def tpr_fp(cur_pred, gsr, cutoff):
 					nd1 = nd1 + datetime.timedelta(days=1)
 					nd2 = nd2 - datetime.timedelta(days=1)
 					if gsr.has_key(id) and gsr[id].has_key(nd1):
-						print "Found true positive" 
+						#print "Found true positive" 
 						data[(id,dt)] = 1
 						flag = 1
 						nd = nd1
 						break  
 					if gsr.has_key(id) and gsr[id].has_key(nd2):
-						print "Found true positive" 
+						#print "Found true positive" 
 						data[(id,dt)] = 1
 						flag = 1 
 						nd = nd2
 						break 
-	
+						
+			# Statement that increments the false positive 
 			if flag == 0:
+				#print "Found false positive"
 				fp = fp + 1
 		
 			#nd = dt
@@ -125,7 +128,7 @@ def tpr_fp(cur_pred, gsr, cutoff):
 
 if __name__ == '__main__':
 	makeWarningFile('/Users/Adityan/Documents/Github_Repos/disease_outbreak_detection/gsr/subgraph')
-	proc('warning_file.txt','Gsr_argentina_0313.txt', 6) 
+	proc('warning_file.txt','Gsr_argentina_0313.txt', 0) 
 	#proc(warning_file, gsr_file, cutoff)
 	 
 
