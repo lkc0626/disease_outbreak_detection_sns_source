@@ -93,43 +93,37 @@ def pvalues_calc(id, dt_cnt, gsr_dt, stdt, cutdt, enddt):
         f.close()
     return pvalues
 
-def mainproc(cutoff):
+def mainproc(co1,folderPath,gsrName,ci_2_idName,databaseName,outputFolderName,stdt,cutdu,enddt):
     # Establish communication queues
 
-    cos = [ 'chile']
     folder = 'data/'
 
-    #stdt  = gdt('2012-05-01') 
-    stdt  = gdt('2012-08-25') 
-    #cutdt = gdt('2013-12-30')
-    cutdt = gdt('2012-08-27')
-    enddt = gdt('2012-08-29')
-    gsr = pickle.loads(open(os.path.join(folder, 'cu_gsr.txt')).read())
+    gsr = pickle.loads(open(os.path.join(folder, gsrName)).read())
  #   //print gsr
-    for co1 in cos[:]:
-        ci_2_id = json.loads(open('data/{0}/ci_2_id.txt'.format(co1)).read())
-        
-        co_pvalues = dict()
+#    for co1 in cos[:]:
+    ci_2_id = json.loads(open('data/{0}/ci_2_id.txt'.format(co1)).read())
+    
+    co_pvalues = dict()
 
-        database = pickle.loads(open(os.path.join(folder, '{0}_twitter_cnt_data.txt'.format(co1))).read())
+    database = pickle.loads(open(os.path.join(folder, databaseName)).read())
  #       print database
-        cis = database.keys()
-        for (ci, co, st) in cis:
-            ci = nstr(ci)
-            co = nstr(co)
-            st = nstr(st)
-            dt_cnt = database[(ci, co, st)]
-            if not gsr.has_key((ci, co, st)):
-                gsr[(ci, co, st)] = dict()
-            gsr_dt = gsr[(ci, co, st)]
-            str = ci + '_' + co + '_' + st
-            if ci_2_id.has_key(str):
-                id = ci_2_id[str]
-            else:
-                id = -1
-            pvalues = pvalues_calc(id, dt_cnt, gsr_dt, stdt, cutdt, enddt)
-            #print pvalues
-            co_pvalues[(ci, co, st)] = pvalues
+    cis = database.keys()
+    for (ci, co, st) in cis:
+        ci = nstr(ci)
+        co = nstr(co)
+        st = nstr(st)
+        dt_cnt = database[(ci, co, st)]
+        if not gsr.has_key((ci, co, st)):
+            gsr[(ci, co, st)] = dict()
+        gsr_dt = gsr[(ci, co, st)]
+        str = ci + '_' + co + '_' + st
+        if ci_2_id.has_key(str):
+            id = ci_2_id[str]
+        else:
+            id = -1
+        pvalues = pvalues_calc(id, dt_cnt, gsr_dt, stdt, cutdt, enddt)
+        #print pvalues
+        co_pvalues[(ci, co, st)] = pvalues
 
     dt = cutdt - datetime.timedelta(days=1)
     while dt < enddt:
@@ -152,7 +146,7 @@ def mainproc(cutoff):
         for id, p in dt_data:
             dt_data1[id] = [id, p]
             #print id,p
-        folder1 = 'data/{0}/twitter_output'.format(co1)
+        folder1 = folderPath+'{0}/'.format(co1)+outputFolderName
         if not os.path.exists(folder1):
             os.makedirs(folder1)
         out = open(os.path.join(folder1, '{0}.txt'.format(dt.strftime("%Y-%m-%d"))), 'w')
@@ -162,9 +156,17 @@ def mainproc(cutoff):
         out.close()
 
 if __name__ == '__main__':
-
-    mainproc(15)
-
+    cos = [ 'chile']
+    for co1 in cos:
+        folderPath='data/'
+        gsrName='cu_gsr.txt'
+        ci_2_idName='data/{0}/ci_2_id.txt'.format(co1)
+        databaseName='{0}_twitter_cnt_data.txt'.format(co1)
+        outputFolderName='twitter_output'
+        stdt  = gdt('2012-08-25')
+        cutdt = gdt('2012-08-27')
+        enddt = gdt('2012-08-29')
+        mainproc(co1,folderPath,gsrName,ci_2_idName,databaseName,outputFolderName,stdt,cutdt,enddt)
 
 
  
