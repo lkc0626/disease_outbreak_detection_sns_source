@@ -13,13 +13,13 @@ for line in lines:
 	city = items[0] 
 	dt = datetime.datetime.strptime(items[1], "%Y-%m-%d")
 	score = float(items[2])
-	
+	pred.append((city, dt, score)) #adding city, dt, score values 
 	
 	
 	gsr_file = "" #ADD: where the gsr file is defined, gsr file should have id, dt, et 
-	pred = sorted(pred, key = lambda item: item[0])
+	pred = sorted(pred, key = lambda item: item[0]) #sorts pred value based on city 
 	
-	gsr = dict()
+	gsr = dict() #Dictionary to hold gsr events from file 
 	
 	for line in open(gsr_file).readlines():
 		items = line.split()
@@ -27,6 +27,7 @@ for line in lines:
 		id = items[4]
 		dt = items[5] 
 		
+		# Fills gsr with [(ci,id)][dt] values 
 		if gsr.has_key(ci, id):
 			gsr[(ci, id)][dt] = 0
 		else:
@@ -44,8 +45,53 @@ for line in lines:
 
 # TP/FP Equivalent 	
 
-	
+#Formula for recall is total true events within two weeks / total true events 
+#Formula for true positive rate is true positive / true positive + false positive
+#Formula for false positive rate is false positive days / # days 
 
+fp = 0 
+tp = 0
+data = dict()
+
+n = 0
+
+"""
+for ci, id, dts in gsr.items():
+	n = n + len(dts)
+"""
+
+for ci, id, dt in cur_pred
+	flag = 0
+	
+	# First if statement checks if there is an exact match between a gsr event and an EMBERS warning
+	if gsr.has_key(ci, id) and gsr[(ci,id)].has_key(dt):
+		data[(ci,id,dt)] = 1
+		flag = 1
+		nd = dt
+	# Second statement to check if there is  match in the two week window 
+	else: 
+		nd1, nd2 = nd 
+		for i in range(7):
+			nd1 = nd1 + datetime.timedelta(days=1)
+			nd2 = nd2 - datetime.timedelta(days=1)
+			if gsr.has_key(ci,id) and gsr[(ci,id)].has_key(nd1):
+				data[(ci,id,dt)] = 1
+				flag = 1
+				nd = nd1
+				break  
+			if gsr.has_key(ci,id) and gsr[(ci,id)].has_key(nd2):
+				data[(ci,id,dt)] = 1
+				flag = 1 
+				nd = nd2
+				break 
+	
+	if flag == 0:
+		fp = fp + 1
+		
+tp = len(data)
+tpr = tp / len(gsr)
+fpr = fp / len(gsr)
+recall = tp / len(gsr) 
 
 """
 def tpr_fp(cur_pred, gsr):
