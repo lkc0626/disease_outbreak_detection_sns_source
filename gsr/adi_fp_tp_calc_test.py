@@ -6,16 +6,19 @@ import os
 
 #File to take warning files 
 def makeWarningFile(path):
-	warning_file = open('warning_file', 'a')	
-	for filename in os.listdir(path):
+    warning_file = open('warning_file.txt', 'a')
+    warning_file.seek(0)
+    warning_file.truncate()	 # Deletes contents in warning file from previous use 
+    for filename in os.listdir(path):
 		dateobj = datetime.datetime.strptime(filename[0:10],'%Y-%m-%d').date()		
 		file_path = os.path.join(path, filename)
-		items = json.loads(open(file_path).read())
+		items = open(file_path).read().split()
+		print items
 		score = items[-1]
-			for id in range(len(items)-1):							
-				warning_file.write('{0} {1} {2}\n'.format(id, filename[0:10], score))
-				
-
+		for id in range(len(items)-1):							
+			warning_file.write('{0} {1} {2}\n'.format(items[id], filename[0:10], score))
+			#print(items[id], filename[0:10], score)
+			
 
 def proc(warning_file, gsr_file, cutoff):
 	pred = [] # value to hold city, dt, score 
@@ -45,8 +48,9 @@ def proc(warning_file, gsr_file, cutoff):
 				gsr[id][dt] = 0
 			else:
 				gsr[id] = {dt: 0} 
-		#curpred = pred[] 	
-		tpr_fp(pred, gsr) 
+		#curpred = pred[] 
+	#print "Calling tpr_fp"	
+	tpr_fp(pred, gsr, cutoff) 
 			
 # TP/FP Equivalent 	
 
@@ -54,7 +58,7 @@ def proc(warning_file, gsr_file, cutoff):
 #Formula for true positive rate is true positive / true positive + false positive
 #Formula for false positive rate is false positive days / # days 
 
-def tpr_fp(cur_pred, gsr):
+def tpr_fp(cur_pred, gsr, cutoff):
 	fp = 0 # number of false positives 
 	tp = 0 # number of true positives 
 	data = dict() # used to hold all the true events 
@@ -68,21 +72,24 @@ def tpr_fp(cur_pred, gsr):
 		if score >= cutoff: 
 			# First if statement checks if there is an exact match between a gsr event and an EMBERS warning
 			if gsr.has_key(id) and gsr[id].has_key(dt):
+				print "Found true positive"
 				data[(id,dt)] = 1
 				flag = 1
 				#nd = dt
 			# Second statement to check if there is  match in the two week window 
 			else: 
-				nd1, nd2 = dt 
+				nd1 = nd2 = dt 
 				for i in range(7):
 					nd1 = nd1 + datetime.timedelta(days=1)
 					nd2 = nd2 - datetime.timedelta(days=1)
 					if gsr.has_key(id) and gsr[id].has_key(nd1):
+						print "Found true positive" 
 						data[(id,dt)] = 1
 						flag = 1
 						nd = nd1
 						break  
 					if gsr.has_key(id) and gsr[id].has_key(nd2):
+						print "Found true positive" 
 						data[(id,dt)] = 1
 						flag = 1 
 						nd = nd2
@@ -103,19 +110,22 @@ def tpr_fp(cur_pred, gsr):
 					
 		
 		
-		tp = len(data)
-		tpr = tp / len(cur_pred)
-		fpr = fp / len(cur_pred) 
+	tp = len(data)
+	tpr = tp / len(cur_pred)
+	fpr = fp / len(cur_pred) 
+	if (len(n) != 0):
 		recall = tp / len(n) 
-	
-		print tp
-		print tpr
-		print fpr
-		print recall 
+		print "Recall: " +str(recall )
+
+	print "True positive: "+str(tp)
+	print "False positive: "+str(fp)
+	print "True positive rate: "+str(tpr)
+	print "False positive rate: "+str(fpr)
+		
 
 if __name__ == '__main__':
 	makeWarningFile('/Users/Adityan/Documents/Github_Repos/disease_outbreak_detection/gsr/subgraph')
-	
+	proc('warning_file.txt','Gsr_argentina_0313.txt', 6) 
 	#proc(warning_file, gsr_file, cutoff)
 	 
 
