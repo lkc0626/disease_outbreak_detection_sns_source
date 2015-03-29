@@ -63,7 +63,6 @@ def pvalues_calc(id, dt_cnt, gsr_dt, stdt, cutdt, enddt):
     length = (cutdt - stdt).days
     p_ref = len(vec) * 1.0 / length
     dt = cutdt - datetime.timedelta(days = 1)
-    i = 0
     #print '############################################'
     while dt <= enddt:
         #print dt
@@ -83,12 +82,14 @@ def pvalues_calc(id, dt_cnt, gsr_dt, stdt, cutdt, enddt):
         if pvalue > p_ref:
             pvalue = p_ref
         pvalues[dt] = pvalue
+     #   print pvalue
     #for dt, pvalue in pvalues.items():
     #    print dt, pvalue
     if id == 45:
         f = open('log.txt', 'w')
         for dt, pvalue in sorted(pvalues.items(), key = lambda item: item[0]):
             f.write('{0}, {1}'.format(dt, pvalue) + '\n')
+ #           print dt,pvalue
         f.close()
     return pvalues
 
@@ -111,7 +112,7 @@ def mainproc(cutoff):
         co_pvalues = dict()
 
         database = pickle.loads(open(os.path.join(folder, '{0}_twitter_cnt_data.txt'.format(co1))).read())
-        print database
+ #       print database
         cis = database.keys()
         for (ci, co, st) in cis:
             ci = nstr(ci)
@@ -127,6 +128,7 @@ def mainproc(cutoff):
             else:
                 id = -1
             pvalues = pvalues_calc(id, dt_cnt, gsr_dt, stdt, cutdt, enddt)
+            #print pvalues
             co_pvalues[(ci, co, st)] = pvalues
 
     dt = cutdt - datetime.timedelta(days=1)
@@ -136,22 +138,26 @@ def mainproc(cutoff):
         dt_data = []
         for (ci, co, st), pvalues in co_pvalues.items():
              cistr = ci + '_' + co + '_' + st
-        if ci_2_id.has_key(cistr):
-            id = ci_2_id[cistr]
-            dt_data.append([id, pvalues[dt]])
-        else:
-            dt_data = sorted(dt_data, key = lambda item: item[0])
+        #print co_pvalues.items()
+             if ci_2_id.has_key(cistr):
+                id = ci_2_id[cistr]
+                dt_data.append([id, pvalues[dt]])
+             else:
+                dt_data = sorted(dt_data, key = lambda item: item[0])
+        
         n = len(ci_2_id.keys())
         dt_data1 = []
         for i in range(n):
             dt_data1.append([i, 1.0])
         for id, p in dt_data:
             dt_data1[id] = [id, p]
-        folder1 = 'data/{0}/twitter_output'.format(co1, cutoff)
+            #print id,p
+        folder1 = 'data/{0}/twitter_output'.format(co1)
         if not os.path.exists(folder1):
             os.makedirs(folder1)
         out = open(os.path.join(folder1, '{0}.txt'.format(dt.strftime("%Y-%m-%d"))), 'w')
         for id, p in dt_data1:
+           # print p
             out.write('{0} {1}'.format(id, p) + '\n')
         out.close()
 
