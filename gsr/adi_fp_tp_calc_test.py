@@ -99,10 +99,9 @@ def tpr_fp(cur_pred, gsr):
 			for i in range(14):
 				nd = dt + datetime.timedelta(days = 1) 
 				if gsr[(ci,id)].has_key(nd):
-					if n.has_key() : # enter code to search for unique gsr 
-					
-					else:
-						n.getgsr.
+					if not n.has_key(id):
+						n[id] = dt					
+						
 					
 		
 		
@@ -111,12 +110,12 @@ def tpr_fp(cur_pred, gsr):
 	fpr = fp / len(cur_pred)
 
 
-	recall = tp / len(gsr) 
+	recall = tp / len(n) 
 	
 	print tp
 	print tpr
 	print fpr
-	print reclal 
+	print recall 
 
 if __name__ == '__main__':
 	
