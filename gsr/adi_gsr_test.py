@@ -62,7 +62,7 @@ def generateGSR(gsrfile, savePath):
 				if ci_2_id.has_key(ci):
 					id = ci_2_id[ci]
 					for dt in sorted(dts):
-						print co+' '+et+' '+dt.strftime('%Y-%m-%d')
+						#print co+' '+et+' '+dt.strftime('%Y-%m-%d')
 						if dt >= cutdt and dt <= enddt: 
 							pathName = os.path.join(savePath, 'Gsr_'+co+'_'+et+'.txt'.format(co1))
 							open(pathName, 'a').write('{0} {1}\n'.format(id, dt.strftime('%Y-%m-%d')))   
@@ -72,4 +72,4 @@ if __name__ = '__main__':
 	gsrfile = 'gsrFebruary_all.mjson' 
 	savePath = '/Users/Adityan/Documents/Github_Repos/disease_outbreak_detection/gsr/output' #Change this to where you want to save the output
 
-	
+	generateGSR(gsrfile, savepath)

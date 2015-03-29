@@ -12,10 +12,10 @@ def proc(warning_file, gsr_file, cutoff):
 	lines = open(warning_file, "r").readlines() #ADD: Open file with [city, date, score] (add event type as well?) 
 	for line in lines:
 		items = line.split()
-		city = items[0] 
+		id = items[0] 
 		dt = datetime.datetime.strptime(items[1], "%Y-%m-%d")
 		score = float(items[2])
-		pred.append((city, dt, score)) #adding city, dt, score values 
+		pred.append((id, dt, score)) #adding city, dt, score values 
 	
 	
 		#gsr_file = "" #ADD: where the gsr file is defined, gsr file should have id, dt, et 
@@ -26,16 +26,17 @@ def proc(warning_file, gsr_file, cutoff):
 	
 		for line in open(gsr_file).readlines():
 			items = line.split()
-			ci = items[1] 
-			id = items[4]
-			dt = items[5] 
+			id = items[0] 
+			dt = items[1] 
 		
 			# Fills gsr with [(ci,id)][dt] values 
-			if gsr.has_key(ci, id):
-				gsr[(ci, id)][dt] = 0
+			if gsr.has_key(id):
+				gsr[id][dt] = 0
 			else:
-				gsr[(ci,id)] = {dt: 0} 
-		
+				gsr[id] = {dt: 0} 
+		#curpred = pred[] 	
+		tpr_fp(pred, gsr) 
+			"""
 			tprs = []
 			fps = []
 			for i in range(1, 300):
@@ -45,7 +46,7 @@ def proc(warning_file, gsr_file, cutoff):
 				fps.append(fp)
 
 			return tprs, fps
-
+			"""
 # TP/FP Equivalent 	
 
 #Formula for recall is total true events within two weeks / total true events 
@@ -53,11 +54,10 @@ def proc(warning_file, gsr_file, cutoff):
 #Formula for false positive rate is false positive days / # days 
 
 def tpr_fp(cur_pred, gsr):
-	fp = 0 
-	tp = 0
-	data = dict()
-
-	n = 0
+	fp = 0 # number of false positives 
+	tp = 0 # number of true positives 
+	data = dict() # used to hold all the true events 
+	n = dict() # number of events that happen within a 2 week window of all nodes 
 
 	"""
 	for ci, id, dts in gsr.items():
@@ -65,57 +65,55 @@ def tpr_fp(cur_pred, gsr):
 	"""
 	#n = dict() number of events that happen in the two week window 
 	
-	for ci, id, dt in cur_pred
+	for id, dt, score in cur_pred
 		flag = 0
-		
-		# First if statement checks if there is an exact match between a gsr event and an EMBERS warning
-		if gsr.has_key(ci, id) and gsr[(ci,id)].has_key(dt):
-			data[(ci,id,dt)] = 1
-			flag = 1
-			nd = dt
-		# Second statement to check if there is  match in the two week window 
-		else: 
-			nd1, nd2 = nd 
-			for i in range(7):
-				nd1 = nd1 + datetime.timedelta(days=1)
-				nd2 = nd2 - datetime.timedelta(days=1)
-				if gsr.has_key(ci,id) and gsr[(ci,id)].has_key(nd1):
-					data[(ci,id,dt)] = 1
-					flag = 1
-					nd = nd1
-					break  
-				if gsr.has_key(ci,id) and gsr[(ci,id)].has_key(nd2):
-					data[(ci,id,dt)] = 1
-					flag = 1 
-					nd = nd2
-					break 
+		if score >= cutoff: 
+			# First if statement checks if there is an exact match between a gsr event and an EMBERS warning
+			if gsr.has_key(id) and gsr[id].has_key(dt):
+				data[(id,dt)] = 1
+				flag = 1
+				#nd = dt
+			# Second statement to check if there is  match in the two week window 
+			else: 
+				nd1, nd2 = dt 
+				for i in range(7):
+					nd1 = nd1 + datetime.timedelta(days=1)
+					nd2 = nd2 - datetime.timedelta(days=1)
+					if gsr.has_key(id) and gsr[id].has_key(nd1):
+						data[(id,dt)] = 1
+						flag = 1
+						nd = nd1
+						break  
+					if gsr.has_key(id) and gsr[id)].has_key(nd2):
+						data[(id,dt)] = 1
+						flag = 1 
+						nd = nd2
+						break 
 	
-		if flag == 0:
-			fp = fp + 1
+			if flag == 0:
+				fp = fp + 1
 		
-		#nd = dt
-		if flag == 1:
-			nd = dt - datetime.timedelta(days = 7)
-			for i in range(14):
-				nd = dt + datetime.timedelta(days = 1) 
-				if gsr[(ci,id)].has_key(nd):
-					if not n.has_key(id):
-						n[id] = dt					
+			#nd = dt
+			if flag == 1:
+				nd = dt - datetime.timedelta(days = 7)
+				for i in range(14):
+					nd = dt + datetime.timedelta(days = 1) 
+					if gsr[id].has_key(nd):
+						if not n.has_key(id):
+							n[id] = dt					
 						
 					
 		
 		
-	tp = len(data)
-	tpr = tp / len(cur_pred)
-	fpr = fp / len(cur_pred)
-
-
-	recall = tp / len(n) 
+		tp = len(data)
+		tpr = tp / len(cur_pred)
+		fpr = fp / len(cur_pred) 
+		recall = tp / len(n) 
 	
-	print tp
-	print tpr
-	print fpr
-	print recall 
+		print tp
+		print tpr
+		print fpr
+		print recall 
 
 if __name__ == '__main__':
 	
