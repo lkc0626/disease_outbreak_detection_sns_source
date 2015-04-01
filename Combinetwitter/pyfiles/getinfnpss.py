@@ -132,7 +132,7 @@ def getinfnpss_f(alpha_max,graphfile):
             edge = '{0}_{1}'.format(item[0], item[1])
             network[edge] = float(item[2])
         
-        print 'Result 1: '
+        print 'Result subgraph: '
         print npss_detection(pvalue, network, alpha_max)
         '''
         for i in range(50):
