@@ -10,6 +10,7 @@ def gdt(str):
 def generateGSR(co1,event_Type,gsrfile,cutdt,enddt):
 
 	#Code to delete any previous output in the output folder
+
     savePath='../input' 
     for file in os.listdir(savePath):
 		file_path = os.path.join(savePath, file)
@@ -24,6 +25,7 @@ def generateGSR(co1,event_Type,gsrfile,cutdt,enddt):
 #	cos = ['ecuador', 'argentina', 'chile', 'mexico', 'colombia'] #List of countries 
     gsr = dict()
    # for co1 in cos:
+
     for event in  events[:]:
         et = event['eventType']
         if et==event_Type:
@@ -40,9 +42,8 @@ def generateGSR(co1,event_Type,gsrfile,cutdt,enddt):
 						gsr[(ci, co, st, et)] = {dt: 1}
 					else:        			
 						gsr[(ci, co, st, et)][dt] = 1 
-			
 
-	for key in gsr: 
+    for key in gsr: 
 		#Writes files to unique gsr text file 
 		pathName = os.path.join(savePath, str(key[1])+'_'+str(key[3])+'_gsr.txt')
 		open(pathName, 'a').write(pickle.dumps(gsr[key]))
@@ -51,10 +52,16 @@ def generateGSR(co1,event_Type,gsrfile,cutdt,enddt):
 #	cutdt = gdt('2013-12-31')
 #	enddt = gdt('2015-03-29') 
 	#for co1 in cos[0:]:
-    ci_2_id = json.loads(open(co1+'_ci_2_id.txt'.format(co1)).read())
+
+
+    savePathTemp = savePath+'/ci2d'
+    coTemp = str(co1)+'_ci_2_id.txt'
+    pathName = os.path.join(savePathTemp, coTemp)
+
+    ci_2_id = json.loads(open(pathName).read())
     items = sorted(ci_2_id.keys())
 
-	for (ci, co, st, et), dts in gsr.items():
+    for (ci, co, st, et), dts in gsr.items():
 		if co == co1:
 			ci = ci + '_' + co + '_' + st
 			if ci_2_id.has_key(ci):
