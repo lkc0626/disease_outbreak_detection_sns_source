@@ -131,16 +131,13 @@ def tpr_fp(pred, gsr, k):
 	
 	
 def graph(tprList, fprList, recallList, filename):
-
-	"""
-	print filename 
-	print tprList
-	print fprList
-	"""
+	
+	# Shows plot of tpr vs. fpr 
 	plt.scatter(tprList, fprList)
 	plt.xlabel('True Positive Rate')
 	plt.ylabel('False Positive Rate')
 	plt.show()
+	# Shows plot of tpr vs. recall 
 	if not (recallList[0] == 0): # only show if there is an element in recall, edit to make more robust
 		plt.scatter(tprList, recallList)
 		plt.xlabel('True Positive Rate')
