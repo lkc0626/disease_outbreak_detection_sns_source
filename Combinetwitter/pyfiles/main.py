@@ -1,10 +1,10 @@
 import sys
 #from sys import gsr_proc
-from adi_gsr_test import generateGSR
+from adi_gsr_test import gsr
 from geo_proc_twitter import geo_proc_twitter_f
 from twitter_calc_pvalues import  mainproc
 from getinfnpss import getinfnpss_f
-from adi_fp_tp_calc_test import adi_fp_tp_calc_f
+from adi_fp_tp_calc_test import fp_tp_calc
 import pickle
 import json
 import datetime
@@ -24,8 +24,9 @@ for co1 in cos:
     folder = '../input/raw/twitter-2012'
     
     gsrfile1 = 'gsrFebruary_all.mjson' 
-
-    generateGSR(co1,event_Type,gsrfile1, cutdt,enddt)
+	
+	#Generates GSR pkl and cutoff files using cutoff/enddates and specified event types/countries
+    gsr(co1,event_Type,gsrfile1, cutdt,enddt)
 
     geo_proc_twitter_f(key_terms,folder,co1)
 
@@ -41,4 +42,6 @@ for co1 in cos:
     getinfnpss_f(alpha_max,graphfile)
 
     cutoff_score=0
-    adi_fp_tp_calc_f(cutoff_score,co1,event_Type)
+    k = 50 
+    # Calculates fp/tp and draws graphs 
+    fp_tp_calc(cutoff_score, k)

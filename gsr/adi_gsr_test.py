@@ -67,14 +67,16 @@ def generateGsrCutoff(path, cos, gsr, cutdt, enddt):
 								open(pathName, 'a').write('{0} {1}\n'.format(id, dt.strftime('%Y-%m-%d')))   
 					
 
+
+
 if __name__ == '__main__':
 	gsrfile = 'gsrFebruary_all.mjson' 
 	path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) # script directory
 	deletePreviousOutput(path)
 	
 	#take cutdt, enddt, cos, event types
-	cutdt = gdt('2013-12-31')
-	enddt = gdt('2015-03-29') 
+	cutdt = gdt('2013-12-31') #cutoff date 
+	enddt = gdt('2015-03-29') #end date 
 	cos = ['ecuador', 'argentina', 'chile', 'mexico', 'colombia'] #List of countries 
 	eventTypes = ['0311', '0312', '0313', '0314'] #List of events 
 
