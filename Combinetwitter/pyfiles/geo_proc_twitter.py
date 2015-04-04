@@ -10,7 +10,7 @@ from utils import normalize_str as nstr
 #loc = pickle.load(open('../data/ci_co_st_2_latlong.pkl', 'rb'))
 
 #cos = ['ecuador', 'colombia', 'chile', 'argentina', 'mexico']
-def geo_proc_twitter_f(key_terms, folder,co1):
+def geo_proc_twitter_f(key_terms, folder, path,co1):
     ''' 
     vocab = json.loads(open(key_terms).read())
     vocab = {kw.strip().lower(): 1 for kw in vocab if len(kw.strip().split()) == 1}
@@ -33,6 +33,7 @@ def geo_proc_twitter_f(key_terms, folder,co1):
     #for co1 in cos[4:]:
     #folder = 'dataset/twitter-2012'
     #    files = [file for file in os.listdir(folder) if file.find(co1) >= 0]
+    
     files = [file for file in os.listdir(folder)]
     for file in files[:]:
         print file
@@ -73,10 +74,10 @@ def geo_proc_twitter_f(key_terms, folder,co1):
     #    open('data/{0}_ci_count_data.txt'.format(co1), 'w').write(pickle.dumps(database))
     #    database = pickle.loads(open('data/{0}_ci_count_data.txt'.format(co1)).read())
         
-        ofolder = '../input/'
+        ofolder = path+'/input'
 
         #gsr = pickle.loads(open(os.path.join(folder, gsrName)).read())
-        gsrf=ofolder+'{0}_twitter_cnt_data.txt'.format(co1)
+        gsrf=ofolder+'/{0}_twitter_cnt_data.txt'.format(co1)
         open(gsrf, 'w+').write(pickle.dumps(database))
         
        # database = pickle.loads(open('{0}_twitter_cnt_data.txt'.format(co1)).read())

@@ -93,15 +93,15 @@ def pvalues_calc(id, dt_cnt, gsr_dt, stdt, cutdt, enddt):
         f.close()
     return pvalues
 
-def mainproc(co1,gsrName,databaseName,stdt,cutdt,enddt):
+def mainproc(co1,gsrName,databaseName,stdt,cutdt,enddt, path):
     
     # Establish communication queues
 
-    folder = '../input/'
-    outputFolderName='../output/pvalue'
+    folder = path+'/input/'
+    outputFolderName= path+'/output/pvalue'
 
 
-    for file in os.listdir(outputFolderName):
+    for file in os.listdir(path+'/output/pvalue'):
 		file_path = os.path.join(outputFolderName, file)
 		try: 
 			if os.path.isfile(file_path):
@@ -110,7 +110,7 @@ def mainproc(co1,gsrName,databaseName,stdt,cutdt,enddt):
 			print e    
     
     
-    savePathTemp = '../input/ci2d'
+    savePathTemp = path+'/input/ci2d'
     coTemp = co1+'_ci_2_id.txt'
     pathName = os.path.join(savePathTemp, coTemp)
 
@@ -118,7 +118,7 @@ def mainproc(co1,gsrName,databaseName,stdt,cutdt,enddt):
 
 
 
-    gsr = pickle.loads(open(os.path.join(folder, gsrName)).read())
+    gsr = pickle.loads(open(os.path.join(folder+'/gsr_pkl', gsrName)).read())
  #   //print gsr
 #    for co1 in cos[:]:
   #  ci_2_id = json.loads(open('data/{0}/ci_2_id.txt'.format(co1)).read())

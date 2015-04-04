@@ -9,16 +9,16 @@ import matplotlib.pyplot as plt
 
 #File to take warning files from subgraph files 
 def makeWarningFile(path):
-	warningPath = os.path.join(path, 'warning_file.txt')	
+	warningPath = os.path.join(path+'/input', 'warning_file.txt')	
 	warning_file = open(warningPath, 'a')
 	warning_file.seek(0)
 	warning_file.truncate()	 # Deletes contents in warning file from previous use 
 		
-	for filename in os.listdir(path+'/subgraph'):
+	for filename in os.listdir(path+'/output/subgraph'):
 		dateobj = datetime.datetime.strptime(filename[0:10],'%Y-%m-%d').date()		
-		file_path = os.path.join(path+'/subgraph', filename)
+		file_path = os.path.join(path+'/output/subgraph', filename)
 		items = open(file_path).read().split()
-		print items
+		#print items
 		score = items[-1]
 		for id in range(len(items)-1):							
 			warning_file.write('{0} {1} {2}\n'.format(items[id], filename[0:10], score))
@@ -143,11 +143,12 @@ def graph(tprList, fprList, recallList, filename):
 		plt.ylabel('False Positive Rate') 
 		plt.show()	
 
-def fp_tp_calc(cutoff, k): 
-	path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) # script directory
+def fp_tp_calc(cutoff, k, path): 
+	#os.chdir('..')
+	#path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) # script directory
 	makeWarningFile(path)
-	pred = makePredictionList('warning_file.txt', cutoff) 
-	gsrPath = path+'/output/gsr_cutoff'
+	pred = makePredictionList(path+'/input/warning_file.txt', cutoff) 
+	gsrPath = path+'/input/gsr_cutoff'
 		
 	for filename in os.listdir(gsrPath):
 		gsr = makeGsrList(os.path.join(gsrPath,filename))
@@ -168,8 +169,8 @@ if __name__ == '__main__':
 	makeWarningFile(path)
 	cutoff = 0 # change this 
 	k = 50 # change this 
-	pred = makePredictionList('warning_file.txt', cutoff) 
-	gsrPath = path+'/output/gsr_cutoff'
+	pred = makePredictionList(path+'input/warning_file.txt', cutoff) 
+	gsrPath = path+'/input/gsr_cutoff'
 	
 	
 		

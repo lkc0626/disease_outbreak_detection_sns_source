@@ -110,9 +110,9 @@ def getinfnpss(pvalue, network, alpha_max):
 
     
 
-def getinfnpss_f(alpha_max,graphfile):
-    pvaluefolder='../output/pvalue'
-    subgraphfolder =  '../output/subraph'
+def getinfnpss_f(alpha_max,graphfile, path):
+    pvaluefolder=path+'/output/pvalue'
+    subgraphfolder =  path+'/output/subgraph'
     
 #    files = [file for file in os.listdir(folder) if file.find(co1) >= 0]
     files = [file for file in os.listdir(pvaluefolder)]
