@@ -1,20 +1,25 @@
 import json
 import datetime
 import os
+import dateutil
+import matplotlib.pyplot as plt
 
 
 
 #File to take warning files 
 def makeWarningFile(path):
 	warningPath = os.path.join(path, 'warning_file.txt')	
-	warning_file = open(path, 'a')
-    warning_file.seek(0)
-    warning_file.truncate()	 # Deletes contents in warning file from previous use 
-    for filename in os.listdir(path):
+	warning_file = open(warningPath, 'a')
+	warning_file.seek(0)
+	warning_file.truncate()	 # Deletes contents in warning file from previous use 
+	
+	#subgraphPath = os.path.join(path, '/subgraph')
+	
+	for filename in os.listdir(path+'/subgraph'):
 		dateobj = datetime.datetime.strptime(filename[0:10],'%Y-%m-%d').date()		
-		file_path = os.path.join(path, filename)
+		file_path = os.path.join(path+'/subgraph', filename)
 		items = open(file_path).read().split()
-		#print items
+		print items
 		score = items[-1]
 		for id in range(len(items)-1):							
 			warning_file.write('{0} {1} {2}\n'.format(items[id], filename[0:10], score))
@@ -35,7 +40,7 @@ def proc(warning_file, gsr_file, cutoff):
 	
 		#gsr_file = "" #ADD: where the gsr file is defined, gsr file should have id, dt, et 
 		
-		pred = sorted(pred, key = lambda item: item[0]) #sorts pred value based on id
+		pred = sorted(pred, key = lambda item: item[2]) #sorts pred value based on score
 	
 		gsr = dict() #Dictionary to hold gsr events from file 
 	
@@ -44,7 +49,7 @@ def proc(warning_file, gsr_file, cutoff):
 			id = items[0] 
 			dt = items[1] 
 		
-			# Fills gsr with [(ci,id)][dt] values 
+			# Fills gsr with [id][dt] values 
 			if gsr.has_key(id):
 				gsr[id][dt] = 0
 			else:
@@ -125,11 +130,16 @@ def tpr_fp(cur_pred, gsr, cutoff):
 	print "False positive: "+str(fp)
 	print "True positive rate: "+str(tpr)
 	print "False positive rate: "+str(fpr)
+	
+#def graph(tpr, fpr, recall, ):
+
 		
 
 if __name__ == '__main__':
-	makeWarningFile('/Users/Adityan/Documents/Github_Repos/disease_outbreak_detection/gsr/subgraph')
-	proc('warning_file.txt','Gsr_mexico_0312.txt', 0) 
+	makeWarningFile('/Users/Adityan/Documents/Github_Repos/disease_outbreak_detection/gsr')
+	
+	pathtoGsrFile = os.path.join('/Users/Adityan/Documents/Github_Repos/disease_outbreak_detection/gsr/output/gsr_cutoff/', 'Gsr_mexico_0312.txt')
+	proc('warning_file.txt',pathtoGsrFile, 0) 
 	#proc(warning_file, gsr_file, cutoff)
 	 
 
