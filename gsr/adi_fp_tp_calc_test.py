@@ -40,7 +40,8 @@ def makePredictionList(warning_file, cutoff):
 		#gsr_file = "" #ADD: where the gsr file is defined, gsr file should have id, dt, et 
 		
 	pred = sorted(pred, key = lambda item: item[2], reverse=True) #sorts pred value based on score
-	print "Predictions: "+str(len(pred))
+	#print pred
+	#print "Predictions: "+str(len(pred))
 	return pred 
 
 			
@@ -58,7 +59,7 @@ def makeGsrList(gsr_file):
 		else:
 			gsr[id] = {dt: 0} 
 		
-	print "GSR Events: "+str(len(gsr))
+	#print "GSR Events: "+str(len(gsr))
 	return gsr 
 			
 # TP/FP Equivalent 	
@@ -81,7 +82,6 @@ def tpr_fp(pred, gsr, k):
 		
 		# First if statement checks if there is an exact match between a gsr event and an EMBERS warning
 		if gsr.has_key(id) and gsr[id].has_key(dt):
-			print "Found true positive"
 			data[(id,dt)] = 1
 			flag = 1
 			
@@ -118,47 +118,57 @@ def tpr_fp(pred, gsr, k):
 
 
 	tp = len(data)
-	tpr = tp / len(cur_pred)
-	fpr = fp / len(cur_pred) 
+	tpr = tp / len(pred)
+	fpr = fp / len(pred) 
 	if (len(n) != 0):
 		recall = tp / len(n) 
 		return tpr, fpr, recall 
-		#print "Recall: " +str(recall )
 
 	return tpr, fpr, 0 # returns 0 for recall if it is not detected 
-"""
-print "True positive: "+str(tp)
-print "False positive: "+str(fp)
-print "True positive rate: "+str(tpr)
-print "False positive rate: "+str(fpr)
-"""
+
 
 
 	
 	
-def graph(tpr, fpr, recall, pred, cutoff):
-	
+def graph(tprList, fprList, recallList, filename):
+
 	"""
-	Take each gsr run and have a different k cutoff each time (run through and call 
+	print filename 
+	print tprList
+	print fprList
 	"""
-	
-	
-	plt.scatter(tpr, fpr) 
-		
+	plt.scatter(tprList, fprList)
+	plt.xlabel('True Positive Rate')
+	plt.ylabel('False Positive Rate')
+	plt.show()
+	if not (recallList[0] == 0): # only show if there is an element in recall, edit to make more robust
+		plt.scatter(tprList, recallList)
+		plt.xlabel('True Positive Rate')
+		plt.ylabel('False Positive Rate') 
+		plt.show()	
 
 if __name__ == '__main__':
 	
 	path = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) # script directory
 	makeWarningFile(path)
 	cutoff = 0 # change this 
-	k = 10 # change this 
+	k = 50 # change this 
 	pred = makePredictionList('warning_file.txt', cutoff) 
 	gsrPath = path+'/output/gsr_cutoff'
+	
+	
 		
 	for filename in os.listdir(gsrPath):
 		gsr = makeGsrList(os.path.join(gsrPath,filename))
+		tprList = []
+		fprList = []
+		recallList = []
 		for i in range(k):
+			#print i
 			tpr,fpr, recall = tpr_fp(pred, gsr, i)
-			
+			tprList.append(tpr)
+			fprList.append(fpr)
+			recallList.append(recall)
+		graph(tprList, fprList, recallList, filename) 
 		
 
