@@ -23,6 +23,7 @@ def makeWarningFile(path):
 		for id in range(len(items)-1):							
 			warning_file.write('{0} {1} {2}\n'.format(items[id], filename[0:10], score))
 
+#Makes a list of predictions based on the warning file that Embers generates 
 
 def makePredictionList(warning_file, cutoff):
 	pred = [] # value to hold city, dt, score 
@@ -35,16 +36,14 @@ def makePredictionList(warning_file, cutoff):
 		score = float(items[2])
 		if score >= cutoff:
 			pred.append((id, dt, score)) #adding id, dt, score values 
-	
-	
-		#gsr_file = "" #ADD: where the gsr file is defined, gsr file should have id, dt, et 
-		
+			
 	pred = sorted(pred, key = lambda item: item[2], reverse=True) #sorts pred value based on score
 	#print pred
 	#print "Predictions: "+str(len(pred))
 	return pred 
 
 			
+#Makes a gsr list based off the gsr_file 
 
 def makeGsrList(gsr_file):
 	gsr = dict() #Dictionary to hold gsr events from file 
@@ -133,13 +132,13 @@ def tpr_fp(pred, gsr, k):
 def graph(tprList, fprList, recallList, filename):
 	
 	# Shows plot of tpr vs. fpr 
-	plt.scatter(tprList, fprList)
+	plt.plot(tprList, fprList, '-')
 	plt.xlabel('True Positive Rate')
 	plt.ylabel('False Positive Rate')
 	plt.show()
 	# Shows plot of tpr vs. recall 
 	if not (recallList[0] == 0): # only show if there is an element in recall, edit to make more robust
-		plt.scatter(tprList, recallList)
+		plt.plot(tprList, recallList, '-')
 		plt.xlabel('True Positive Rate')
 		plt.ylabel('False Positive Rate') 
 		plt.show()	
